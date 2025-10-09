@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The WebSwan Intake Form</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .emoji {
+      position: absolute;
+      opacity: 0;
+      transition: transform 2s ease, opacity 2s ease;
+    }
+    /* Fix dropdown appearing behind banner */
+    ul.absolute {
+      z-index: 50;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-[#14395d] text-white p-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center relative">
+      <div class="text-2xl font-bold">The WebSwan</div>
+      <ul class="flex space-x-6">
+        <!-- Services Dropdown -->
+        <li class="relative group">
+          <button class="hover:text-gray-300 font-semibold flex items-center">
+            Services
+            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <!-- Updated: stay visible on hover of button or dropdown -->
+          <ul class="absolute left-0 mt-2 w-56 bg-white text-black rounded shadow-lg opacity-0 invisible transition-opacity duration-300 z-50 group-hover:opacity-100 group-hover:visible hover:opacity-100 hover:visible">
+            <li><a href="/free-website-demo" class="block px-4 py-2 hover:bg-gray-100">Free Website Demo</a></li>
+            <li><a href="/free-website-analysis" class="block px-4 py-2 hover:bg-gray-100">Free Website Analysis</a></li>
+            <li><a href="/interested-web-design" class="block px-4 py-2 hover:bg-gray-100">Interested in Web Design</a></li>
+            <li><a href="/landing-page" class="block px-4 py-2 hover:bg-gray-100">Landing Page</a></li>
+            <li><a href="/interactive-brand-hub" class="block px-4 py-2 hover:bg-gray-100 font-bold">Interactive Brand Hub</a></li>
+            <li><a href="/reputation-management" class="block px-4 py-2 hover:bg-gray-100">Reputation Management</a></li>
+            <li><a href="/ad-campaign" class="block px-4 py-2 hover:bg-gray-100">Ad Campaign</a></li>
+            <li><a href="/video" class="block px-4 py-2 hover:bg-gray-100">Video</a></li>
+            <li><a href="/other" class="block px-4 py-2 hover:bg-gray-100">Other</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Header Banner -->
+  <header class="bg-[#14395d] text-[#b3ecf2] font-bold p-6 text-center relative overflow-visible">
+    <h1 class="text-3xl mb-2">The WebSwan Intake</h1>
+    <p>Phone: (415) 877-0687 | Email: thewebswann@gmail.com</p>
+    
+    <!-- Emoji container -->
+    <div id="emoji-container" class="relative h-12 mt-4"></div>
+  </header>
+
+  <main class="max-w-4xl mx-auto mt-6 p-4 bg-white shadow-md rounded-lg">
+    
+    <!-- Telemarketer Script for reference -->
+    <div class="mb-6 p-4 bg-blue-50 rounded-md">
+      <p class="italic text-gray-700">Script for calls:</p>
+      <p class="text-gray-900 font-bold text-lg mt-2">
+        "Hello, this is <span class="text-blue-600">[Telemarketer Name]</span>, how are you today? I run a marketing agency specializing in custom web design, SEO, and internet marketing. I've noticed your website is not performing well on search engines, which makes you miss out on passive income. I’m offering a free website analysis and demo, no cost, no obligation. Can I send you the results via email?"
+      </p>
+    </div>
+
+    <!-- Intake Form -->
+    <form id="lead-form" class="space-y-4" action="https://formspree.io/f/mnngbyyr" method="POST">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" name="name" placeholder="Lead Name" class="border p-2 rounded w-full" required>
+        <input type="tel" name="phone" placeholder="Phone Number" class="border p-2 rounded w-full" required>
+        <input type="email" name="email" placeholder="Email" class="border p-2 rounded w-full" required>
+        <input type="text" name="companyName" placeholder="Company Name" class="border p-2 rounded w-full">
+        <input type="text" name="industry" placeholder="Industry" class="border p-2 rounded w-full">
+        <input type="url" name="website" placeholder="Website (if any)" class="border p-2 rounded w-full">
+        <input type="text" name="serviceInterested" placeholder="Service Interested" class="border p-2 rounded w-full">
+        <input type="number" name="callsMadeToday" placeholder="Calls Made Today" class="border p-2 rounded w-full" min="0">
+        <input type="number" name="interestedCountToday" placeholder="Interested Leads Today" class="border p-2 rounded w-full" min="0">
+      </div>
+
+      <label class="block">
+        Category:
+        <select name="category" class="border p-2 rounded w-full">
+          <option value="Call Back">Call Back</option>
+          <option value="Wants a Demo">Wants a Demo</option>
+          <option value="Wants a Free Website Analysis">Wants a Free Website Analysis</option>
+          <option value="Wants an Email">Wants an Email</option>
+          <option value="Interested/Hot Lead">Interested/Hot Lead</option>
+        </select>
+      </label>
+
+      <label class="block">
+        Comments (max 400 characters):
+        <textarea name="comment" maxlength="400" class="border p-2 rounded w-full h-24"></textarea>
+      </label>
+
+      <div class="flex gap-4 mt-4">
+        <button type="button" id="save-button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save</button>
+        <button type="submit" id="submit-button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Submit</button>
+      </div>
+
+    </form>
+
+    <!-- Saved leads list -->
+    <div id="leads-list" class="mt-6"></div>
+
+  </main>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAqhqUzWqpS7YunkODJU_udTBG3pjsJegQ",
+      authDomain: "webswan-marketing.firebaseapp.com",
+      projectId: "webswan-marketing",
+      storageBucket: "webswan-marketing.firebasestorage.app",
+      messagingSenderId: "556357112107",
+      appId: "1:556357112107:web:6c8bd74e3a7caf9a2d756e",
+      measurementId: "G-M7NDR4DTEW"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const telemarketerId = "telemarketer_1"; // placeholder UID
+
+    const form = document.getElementById('lead-form');
+    const saveButton = document.getElementById('save-button');
+    const leadsList = document.getElementById('leads-list');
+
+    // Load saved leads from localStorage
+    let leads = JSON.parse(localStorage.getItem('leads')) || [];
+
+    function renderLeads() {
+      leadsList.innerHTML = '';
+      leads.forEach((lead, index) => {
+        const div = document.createElement('div');
+        div.className = 'border p-3 rounded mb-2 bg-gray-50';
+        div.innerHTML = `
+          <strong>${lead.name}</strong> - ${lead.category}
+          <p>${lead.comment}</p>
+          <button onclick="moveLead(${index})" class="text-blue-500 underline mr-2">Move</button>
+          <button onclick="editLead(${index})" class="text-green-500 underline mr-2">Edit</button>
+          <button onclick="deleteLead(${index})" class="text-red-500 underline">Delete</button>
+        `;
+        leadsList.appendChild(div);
+      });
+    }
+
+    function saveLead() {
+      const data = Object.fromEntries(new FormData(form));
+      data.telemarketerId = telemarketerId;
+      leads.push(data);
+      localStorage.setItem('leads', JSON.stringify(leads));
+      renderLeads();
+      alert('Lead saved locally!');
+      form.reset();
+    }
+
+    saveButton.addEventListener('click', saveLead);
+
+    function submitLeads() {
+      leads.forEach(lead => {
+        db.collection('leads').add(lead)
+          .then(() => console.log('Lead saved to Firebase:', lead))
+          .catch(err => console.error(err));
+      });
+      localStorage.removeItem('leads');
+      leads = [];
+      renderLeads();
+      alert('All leads submitted to Firebase and Formspree!');
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitLeads();
+      form.submit(); // send to Formspree as well
+    });
+
+    // Emoji Animation
+    const emojis = ['💪','💡','💯','💰','🎯','🔔','🌐','💻'];
+    const container = document.getElementById('emoji-container');
+
+    function animateEmojis(index = 0) {
+      if(index >= emojis.length) return;
+      const emojiEl = document.createElement('span');
+      emojiEl.className = 'emoji';
+      emojiEl.textContent = emojis[index];
+      container.appendChild(emojiEl);
+
+      // Starting position (top-left)
+      emojiEl.style.transform = 'translate(-50px, -50px) scale(0.5)';
+      emojiEl.style.opacity = '1';
+      emojiEl.style.fontSize = '3rem';
+
+      setTimeout(() => {
+        emojiEl.style.transition = 'transform 2s ease, opacity 2s ease';
+        emojiEl.style.transform = 'translate(0px,0px) scale(1.8)';
+        emojiEl.style.opacity = '0.9';
+      }, 50);
+
+      setTimeout(() => {
+        container.removeChild(emojiEl);
+        animateEmojis(index + 1);
+      }, 2500);
+    }
+
+    animateEmojis();
+
+    // Render initial leads
+    renderLeads();
+  </script>
+
+</body>
+</html>
