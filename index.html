@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>The WebSwan Intake Form</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -18,6 +18,88 @@
     ul.absolute {
       z-index: 50;
     }
+
+    /* Highlighted "important" fields */
+    .highlight-field {
+      background-color: #fff9c4 !important;
+      border: 2px solid #f5c518 !important;
+    }
+    .highlight-field:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.5);
+    }
+
+    /* Script tabs */
+    .script-tab-btn {
+      transition: all .2s ease;
+    }
+    .script-tab-btn.active {
+      background-color: #14395d;
+      color: #fff;
+    }
+    .script-panel { display: none; }
+    .script-panel.active { display: block; }
+
+    /* Celebration overlay */
+    #celebration-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      display: none;
+      overflow: hidden;
+    }
+    #celebration-overlay.show { display: block; }
+    .confetti-emoji {
+      position: absolute;
+      top: -60px;
+      font-size: 2.2rem;
+      animation: fall linear forwards;
+      opacity: 0.95;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0.15; }
+    }
+    #celebration-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #14395d;
+      color: #b3ecf2;
+      font-weight: 800;
+      font-size: 1.5rem;
+      padding: 22px 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
+      text-align: center;
+      z-index: 10000;
+      display: none;
+      max-width: 90vw;
+    }
+    #celebration-message.show { display: block; }
+
+    /* Floating WhatsApp quick-message button */
+    #whatsapp-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #25D366;
+      color: #fff;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,.3);
+      z-index: 999;
+      font-size: 28px;
+      text-decoration: none;
+      transition: transform .15s ease;
+    }
+    #whatsapp-float:hover { transform: scale(1.08); }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -35,7 +117,6 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </button>
-          <!-- Updated: stay visible on hover of button or dropdown -->
           <ul class="absolute left-0 mt-2 w-56 bg-white text-black rounded shadow-lg opacity-0 invisible transition-opacity duration-300 z-50 group-hover:opacity-100 group-hover:visible hover:opacity-100 hover:visible">
             <li><a href="/free-website-demo" class="block px-4 py-2 hover:bg-gray-100">Free Website Demo</a></li>
             <li><a href="/free-website-analysis" class="block px-4 py-2 hover:bg-gray-100">Free Website Analysis</a></li>
@@ -56,28 +137,82 @@
   <header class="bg-[#14395d] text-[#b3ecf2] font-bold p-6 text-center relative overflow-visible">
     <h1 class="text-3xl mb-2">The WebSwan Intake</h1>
     <p>Phone: (415) 877-0687 | Email: thewebswann@gmail.com</p>
-    
+
     <!-- Emoji container -->
     <div id="emoji-container" class="relative h-12 mt-4"></div>
   </header>
 
   <main class="max-w-4xl mx-auto mt-6 p-4 bg-white shadow-md rounded-lg">
-    
-    <!-- Telemarketer Script for reference -->
-    <div class="mb-6 p-4 bg-blue-50 rounded-md">
-      <p class="italic text-gray-700">Script for calls:</p>
-      <p class="text-gray-900 font-bold text-lg mt-2">
-        "Hello, this is <span class="text-blue-600">[Telemarketer Name]</span>, how are you today? I run a marketing agency specializing in custom web design, SEO, and internet marketing. I've noticed your website is not performing well on search engines, which makes you miss out on passive income. I’m offering a free website analysis and demo, no cost, no obligation. Can I send you the results via email?"
-      </p>
+
+    <!-- Telemarketer Scripts -->
+    <div class="mb-6">
+      <p class="italic text-gray-700 mb-2">Call Scripts — tap a track:</p>
+      <div class="flex flex-wrap gap-2 mb-3">
+        <button type="button" class="script-tab-btn active px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="medical">Medical Practices</button>
+        <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="legal">Law Firms</button>
+        <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="gatekeeper">Gatekeeper Pivot</button>
+        <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="followup">Follow-Up Hook</button>
+      </div>
+
+      <div class="p-4 bg-blue-50 rounded-md">
+        <div id="script-medical" class="script-panel active">
+          <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Track 1 · Medical Practices &amp; Doctors</p>
+          <p class="text-gray-900 font-bold text-lg leading-relaxed">
+            "Hi [Doctor's Name / Practice Manager], this is <span class="text-blue-600">[Caller Name]</span> with The WebSwan. We specialize in technical intake and digital compliance for medical practices. We ran a complimentary digital audit on your site, and noticed a few visibility and data-intake gaps that don't yet align with updated ADA and privacy standards for patients submitting information online — this is something we help practices get ahead of before it becomes an issue. Can I confirm the best email to send this report over for your review?"
+          </p>
+        </div>
+        <div id="script-legal" class="script-panel">
+          <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Track 2 · Law Firms &amp; Attorneys</p>
+          <p class="text-gray-900 font-bold text-lg leading-relaxed">
+            "Hi [Attorney Name / Managing Partner], this is <span class="text-blue-600">[Caller Name]</span> with The WebSwan. We work specifically with law practices on client acquisition and digital intake security. While reviewing your online presence, we identified a few privacy and confidentiality gaps in your intake forms relative to current State Bar data standards. We put together a complimentary technical assessment — who's the best person to send that one-page breakdown to today?"
+          </p>
+        </div>
+        <div id="script-gatekeeper" class="script-panel">
+          <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">The Gatekeeper Pivot · Receptionist / Front Desk</p>
+          <p class="text-gray-600 text-sm mb-2">Frame the call as a routine compliance follow-up, not a sales pitch:</p>
+          <p class="text-gray-900 font-bold text-lg leading-relaxed">
+            "Hi, this is <span class="text-blue-600">[Caller Name]</span> with The WebSwan. I'm following up on a routine digital intake and security assessment we completed for [Practice/Firm Name]. Who's your Practice Administrator or Office Manager that handles digital compliance and website operations?"
+          </p>
+        </div>
+        <div id="script-followup" class="script-panel">
+          <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">The Follow-Up Hook · Email + Call, 24 Hours Later</p>
+          <p class="text-gray-900 font-bold text-lg leading-relaxed">
+            "Hi [Name], this is <span class="text-blue-600">[Caller Name]</span> following up on the digital audit we emailed over ______ (yesterday, Monday, last week). Our technical director flagged two quick items on your intake security and digital compliance — your site is missing visible ADA and privacy banners, which is one of the first things regulators and legal teams check. When do you have 10 minutes to walk through what we found?"
+          </p>
+        </div>
+      </div>
+
+      <!-- Authority footer note -->
+      <div class="mt-3 border-l-4 border-[#14395d] bg-gray-50 p-4 rounded-r-md">
+        <p class="text-xs uppercase tracking-wide text-[#14395d] font-bold mb-1">If They Ask: "What Is ADA / Privacy Compliance?"</p>
+        <p class="text-gray-800 text-sm leading-relaxed">
+          "Every state has its own regulations for a business's online presence — your website is legally treated as an extension of your practice, so it needs to be in compliance with the rules where you're licensed. Penalties can be issued without advance warning. When our audit tool flags a site, that same finding can be reported to the state attorney's office — so we always send you the direct link to verify it yourself when we send the audit over. What's the best email, and who should we send it to?"
+        </p>
+      </div>
     </div>
 
     <!-- Intake Form -->
-    <form id="lead-form" class="space-y-4" action="https://formspree.io/f/mnngbyyr" method="POST">
-      
+    <form id="lead-form" class="space-y-4" action="https://formspree.io/f/mnngbyyr" method="POST" novalidate>
+
+      <!-- Decision Maker — highlighted, not required -->
+      <div class="p-3 rounded-md border-2 border-yellow-400 bg-yellow-50">
+        <p class="text-xs font-bold uppercase tracking-wide text-yellow-800 mb-2">⭐ Most Important — Get This If Nothing Else</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input type="text" name="decisionMakerName" placeholder="Decision Maker Name" class="highlight-field border p-2 rounded w-full">
+          <select name="decisionMakerRole" class="highlight-field border p-2 rounded w-full">
+            <option value="">Decision Maker Role</option>
+            <option value="Owner">Owner</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Office Manager">Office Manager</option>
+            <option value="Attorney">Attorney</option>
+          </select>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input type="text" name="name" placeholder="Lead Name" class="border p-2 rounded w-full" required>
-        <input type="tel" name="phone" placeholder="Phone Number" class="border p-2 rounded w-full" required>
-        <input type="email" name="email" placeholder="Email" class="border p-2 rounded w-full" required>
+        <input type="text" name="name" placeholder="Lead Name" class="border p-2 rounded w-full">
+        <input type="tel" name="phone" placeholder="Phone Number" class="border p-2 rounded w-full">
+        <input type="email" name="email" placeholder="Email" class="border p-2 rounded w-full">
         <input type="text" name="companyName" placeholder="Company Name" class="border p-2 rounded w-full">
         <input type="text" name="industry" placeholder="Industry" class="border p-2 rounded w-full">
         <input type="url" name="website" placeholder="Website (if any)" class="border p-2 rounded w-full">
@@ -102,9 +237,10 @@
         <textarea name="comment" maxlength="400" class="border p-2 rounded w-full h-24"></textarea>
       </label>
 
-      <div class="flex gap-4 mt-4">
+      <div class="flex flex-wrap gap-3 mt-4">
         <button type="button" id="save-button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save</button>
         <button type="submit" id="submit-button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Submit</button>
+        <button type="button" id="whatsapp-submit-button" class="bg-[#25D366] text-white px-4 py-2 rounded hover:bg-[#1ebe5a]">Submit via WhatsApp</button>
       </div>
 
     </form>
@@ -113,6 +249,13 @@
     <div id="leads-list" class="mt-6"></div>
 
   </main>
+
+  <!-- Floating quick-message WhatsApp button (always available, no form data) -->
+  <a id="whatsapp-float" href="https://wa.me/14158770687?text=Hi%2C%20I%27d%20like%20to%20connect%20about%20The%20WebSwan." target="_blank" rel="noopener" title="Message us on WhatsApp">💬</a>
+
+  <!-- Celebration overlay -->
+  <div id="celebration-overlay"></div>
+  <div id="celebration-message">🎉 Lead Submitted! 🎉<br><span class="text-sm font-normal">Great work — keep the momentum going.</span></div>
 
   <script>
     // Firebase config
@@ -132,6 +275,8 @@
 
     const form = document.getElementById('lead-form');
     const saveButton = document.getElementById('save-button');
+    const whatsappSubmitButton = document.getElementById('whatsapp-submit-button');
+    const submitButton = document.getElementById('submit-button');
     const leadsList = document.getElementById('leads-list');
 
     // Load saved leads from localStorage
@@ -143,58 +288,185 @@
         const div = document.createElement('div');
         div.className = 'border p-3 rounded mb-2 bg-gray-50';
         div.innerHTML = `
-          <strong>${lead.name}</strong> - ${lead.category}
-          <p>${lead.comment}</p>
-          <button onclick="moveLead(${index})" class="text-blue-500 underline mr-2">Move</button>
-          <button onclick="editLead(${index})" class="text-green-500 underline mr-2">Edit</button>
+          <strong>${lead.name || '(no name)'}</strong> - ${lead.category || ''}
+          <p>${lead.comment || ''}</p>
           <button onclick="deleteLead(${index})" class="text-red-500 underline">Delete</button>
         `;
         leadsList.appendChild(div);
       });
     }
 
-    function saveLead() {
+    function deleteLead(index) {
+      leads.splice(index, 1);
+      localStorage.setItem('leads', JSON.stringify(leads));
+      renderLeads();
+    }
+
+    function getFormData() {
       const data = Object.fromEntries(new FormData(form));
       data.telemarketerId = telemarketerId;
+      data.timestamp = new Date().toISOString();
+      return data;
+    }
+
+    function saveLead() {
+      const data = getFormData();
       leads.push(data);
       localStorage.setItem('leads', JSON.stringify(leads));
       renderLeads();
       alert('Lead saved locally!');
       form.reset();
     }
-
     saveButton.addEventListener('click', saveLead);
 
-    function submitLeads() {
-      leads.forEach(lead => {
-        db.collection('leads').add(lead)
-          .then(() => console.log('Lead saved to Firebase:', lead))
-          .catch(err => console.error(err));
-      });
+    async function flushLeadsToFirebase(currentLead) {
+      const all = currentLead ? [...leads, currentLead] : [...leads];
+      for (const lead of all) {
+        try {
+          await db.collection('leads').add(lead);
+        } catch (err) {
+          console.error('Firebase save failed:', err);
+        }
+      }
       localStorage.removeItem('leads');
       leads = [];
       renderLeads();
-      alert('All leads submitted to Firebase and Formspree!');
     }
 
-    form.addEventListener('submit', function(e) {
+    // Fixed: submit now sends the CURRENT form (not just previously saved
+    // leads), uses fetch so the page doesn't redirect away from the
+    // celebration, and only calls form.reset() after everything succeeds.
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      submitLeads();
-      form.submit(); // send to Formspree as well
+      const currentLead = getFormData();
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Submitting...';
+
+      try {
+        await flushLeadsToFirebase(currentLead);
+
+        const fd = new FormData(form);
+        await fetch(form.action, {
+          method: 'POST',
+          body: fd,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        celebrate();
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        alert('Something went wrong submitting — please try again.');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit';
+      }
     });
 
-    // Emoji Animation
+    // Submit via WhatsApp — compiles the form into a message and opens
+    // a chat to (415) 877-0687 with everything pre-filled.
+    whatsappSubmitButton.addEventListener('click', function() {
+      const data = getFormData();
+      const lines = [
+        '*New Lead — The WebSwan*',
+        data.decisionMakerName ? `Decision Maker: ${data.decisionMakerName}${data.decisionMakerRole ? ' (' + data.decisionMakerRole + ')' : ''}` : null,
+        data.name ? `Lead Name: ${data.name}` : null,
+        data.phone ? `Phone: ${data.phone}` : null,
+        data.email ? `Email: ${data.email}` : null,
+        data.companyName ? `Company: ${data.companyName}` : null,
+        data.industry ? `Industry: ${data.industry}` : null,
+        data.website ? `Website: ${data.website}` : null,
+        data.serviceInterested ? `Service Interested: ${data.serviceInterested}` : null,
+        data.category ? `Category: ${data.category}` : null,
+        data.comment ? `Comments: ${data.comment}` : null
+      ].filter(Boolean).join('\n');
+
+      const url = 'https://wa.me/14158770687?text=' + encodeURIComponent(lines);
+      window.open(url, '_blank');
+      celebrate();
+      form.reset();
+    });
+
+    // Script tab switching
+    document.querySelectorAll('.script-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.script-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.script-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('script-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // --- 10-second celebration: falling emojis + a little audio fanfare ---
+    function playFanfare() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = freq;
+          const t0 = ctx.currentTime + i * 0.15;
+          gain.gain.setValueAtTime(0.0001, t0);
+          gain.gain.linearRampToValueAtTime(0.25, t0 + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.5);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(t0);
+          osc.stop(t0 + 0.6);
+        });
+      } catch (err) {
+        console.warn('Audio not available:', err);
+      }
+    }
+
+    let celebrationInterval = null;
+    function celebrate() {
+      const overlay = document.getElementById('celebration-overlay');
+      const message = document.getElementById('celebration-message');
+      const celebrationEmojis = ['🎉','🎊','💰','🚀','🔥','💪','✅','🏆','⭐','💯'];
+
+      overlay.classList.add('show');
+      message.classList.add('show');
+      playFanfare();
+
+      function spawnBurst() {
+        for (let i = 0; i < 6; i++) {
+          const el = document.createElement('span');
+          el.className = 'confetti-emoji';
+          el.textContent = celebrationEmojis[Math.floor(Math.random() * celebrationEmojis.length)];
+          el.style.left = (Math.random() * 100) + 'vw';
+          el.style.animationDuration = (2 + Math.random() * 2) + 's';
+          el.style.fontSize = (1.5 + Math.random() * 1.5) + 'rem';
+          overlay.appendChild(el);
+          setTimeout(() => el.remove(), 4500);
+        }
+      }
+
+      spawnBurst();
+      if (celebrationInterval) clearInterval(celebrationInterval);
+      celebrationInterval = setInterval(spawnBurst, 500);
+
+      setTimeout(() => {
+        clearInterval(celebrationInterval);
+        overlay.classList.remove('show');
+        message.classList.remove('show');
+        overlay.innerHTML = '';
+      }, 10000);
+    }
+
+    // Header emoji animation (unchanged)
     const emojis = ['💪','💡','💯','💰','🎯','🔔','🌐','💻'];
     const container = document.getElementById('emoji-container');
 
     function animateEmojis(index = 0) {
-      if(index >= emojis.length) return;
+      if (index >= emojis.length) return;
       const emojiEl = document.createElement('span');
       emojiEl.className = 'emoji';
       emojiEl.textContent = emojis[index];
       container.appendChild(emojiEl);
 
-      // Starting position (top-left)
       emojiEl.style.transform = 'translate(-50px, -50px) scale(0.5)';
       emojiEl.style.opacity = '1';
       emojiEl.style.fontSize = '3rem';
