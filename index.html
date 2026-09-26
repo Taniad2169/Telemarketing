@@ -145,6 +145,44 @@
   <main class="max-w-4xl mx-auto mt-6 p-4 bg-white shadow-md rounded-lg">
 
     <!-- Telemarketer Scripts -->
+    
+    <!-- Time Zone Checker -->
+    <div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-md">
+      <label for="tz-state-select" class="block text-sm font-bold text-indigo-900 mb-1">&#128337; Check Their Time Zone Before You Call</label>
+      <select id="tz-state-select" class="w-full p-2 rounded-md border border-indigo-300 mb-2">
+        <option value="">Select Prospect's State&hellip;</option>
+        <option value="America/New_York">New York (Eastern)</option>
+        <option value="America/New_York">Florida (Eastern)</option>
+        <option value="America/Denver">Utah (Mountain)</option>
+        <option value="America/Chicago">Texas (Central)</option>
+        <option value="America/New_York">Georgia (Eastern)</option>
+        <option value="America/Los_Angeles">California (Pacific)</option>
+        <option value="America/New_York">New Jersey (Eastern)</option>
+        <option value="America/Los_Angeles">Nevada (Pacific)</option>
+      </select>
+      <p id="tz-current-time" class="text-lg font-bold text-indigo-900"></p>
+    </div>
+    <script>
+      (function() {
+        var tzSelect = document.getElementById('tz-state-select');
+        var tzDisplay = document.getElementById('tz-current-time');
+        var tzInterval = null;
+        function updateTzDisplay() {
+          var tz = tzSelect.value;
+          if (!tz) { tzDisplay.textContent = ''; return; }
+          var label = tzSelect.options[tzSelect.selectedIndex].text;
+          var now = new Date();
+          var timeStr = now.toLocaleTimeString('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true });
+          tzDisplay.textContent = label + ': ' + timeStr + ' right now';
+        }
+        tzSelect.addEventListener('change', function() {
+          updateTzDisplay();
+          if (tzInterval) clearInterval(tzInterval);
+          if (tzSelect.value) { tzInterval = setInterval(updateTzDisplay, 30000); }
+        });
+      })();
+    </script>
+
     <div class="mb-6">
       <p class="italic text-gray-700 mb-2">Call Scripts — tap a track:</p>
       <div class="flex flex-wrap gap-2 mb-3">
