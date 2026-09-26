@@ -325,6 +325,7 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const authReady = firebase.auth().signInAnonymously().catch(function(err) { console.error('Anonymous sign-in failed:', err); });
 
     const telemarketerId = "telemarketer_1"; // placeholder UID
 
@@ -375,6 +376,7 @@
     saveButton.addEventListener('click', saveLead);
 
     async function flushLeadsToFirebase(currentLead) {
+      await authReady;
       const all = currentLead ? [...leads, currentLead] : [...leads];
       for (const lead of all) {
         try {
