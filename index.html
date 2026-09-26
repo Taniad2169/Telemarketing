@@ -145,7 +145,7 @@
   <main class="max-w-4xl mx-auto mt-6 p-4 bg-white shadow-md rounded-lg">
 
     <!-- Telemarketer Scripts -->
-    
+
     <!-- Time Zone Checker -->
     <div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-md">
       <label for="tz-state-select" class="block text-sm font-bold text-indigo-900 mb-1">&#128337; Check Their Time Zone Before You Call</label>
@@ -247,14 +247,14 @@
     </div>
 
     <!-- Intake Form -->
-    <form id="lead-form" class="space-y-4" action="https://formspree.io/f/mnngbyyr" method="POST" novalidate>
+    <form id="lead-form" class="space-y-4" action="https://formspree.io/f/mnngbyyr" method="POST" novalidate autocomplete="off">
 
       <!-- Decision Maker — highlighted, not required -->
       <div class="p-3 rounded-md border-2 border-yellow-400 bg-yellow-50">
         <p class="text-xs font-bold uppercase tracking-wide text-yellow-800 mb-2">⭐ Most Important — Get This If Nothing Else</p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input type="text" name="decisionMakerName" placeholder="Decision Maker Name" class="highlight-field border p-2 rounded w-full">
-          <select name="decisionMakerRole" class="highlight-field border p-2 rounded w-full">
+          <input type="text" name="decisionMakerName" placeholder="Decision Maker Name" class="highlight-field border p-2 rounded w-full" autocomplete="off">
+          <select name="decisionMakerRole" class="highlight-field border p-2 rounded w-full" autocomplete="off">
             <option value="">Decision Maker Role</option>
             <option value="Owner">Owner</option>
             <option value="Doctor">Doctor</option>
@@ -265,20 +265,20 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input type="text" name="name" placeholder="Lead Name" class="border p-2 rounded w-full">
-        <input type="tel" name="phone" placeholder="Phone Number" class="border p-2 rounded w-full">
-        <input type="email" name="email" placeholder="Email" class="border p-2 rounded w-full">
-        <input type="text" name="companyName" placeholder="Company Name" class="border p-2 rounded w-full">
-        <input type="text" name="industry" placeholder="Industry" class="border p-2 rounded w-full">
-        <input type="url" name="website" placeholder="Website (if any)" class="border p-2 rounded w-full">
-        <input type="text" name="serviceInterested" placeholder="Service Interested" class="border p-2 rounded w-full">
-        <input type="number" name="callsMadeToday" placeholder="Calls Made Today" class="border p-2 rounded w-full" min="0">
-        <input type="number" name="interestedCountToday" placeholder="Interested Leads Today" class="border p-2 rounded w-full" min="0">
+        <input type="text" name="name" placeholder="Lead Name" class="border p-2 rounded w-full" autocomplete="off">
+        <input type="tel" name="phone" placeholder="Phone Number" class="border p-2 rounded w-full" autocomplete="off">
+        <input type="email" name="email" placeholder="Email" class="border p-2 rounded w-full" autocomplete="off">
+        <input type="text" name="companyName" placeholder="Company Name" class="border p-2 rounded w-full" autocomplete="off">
+        <input type="text" name="industry" placeholder="Industry" class="border p-2 rounded w-full" autocomplete="off">
+        <input type="url" name="website" placeholder="Website (if any)" class="border p-2 rounded w-full" autocomplete="off">
+        <input type="text" name="serviceInterested" placeholder="Service Interested" class="border p-2 rounded w-full" autocomplete="off">
+        <input type="number" name="callsMadeToday" placeholder="Calls Made Today" class="border p-2 rounded w-full" min="0" autocomplete="off">
+        <input type="number" name="interestedCountToday" placeholder="Interested Leads Today" class="border p-2 rounded w-full" min="0" autocomplete="off">
       </div>
 
       <label class="block">
         Category:
-        <select name="category" class="border p-2 rounded w-full">
+        <select name="category" class="border p-2 rounded w-full" autocomplete="off">
           <option value="Call Back">Call Back</option>
           <option value="Wants a Demo">Wants a Demo</option>
           <option value="Wants a Free Website Analysis">Wants a Free Website Analysis</option>
@@ -289,19 +289,15 @@
 
       <label class="block">
         Comments (max 400 characters):
-        <textarea name="comment" maxlength="400" class="border p-2 rounded w-full h-24"></textarea>
+        <textarea name="comment" maxlength="400" class="border p-2 rounded w-full h-24" autocomplete="off"></textarea>
       </label>
 
       <div class="flex flex-wrap gap-3 mt-4">
-        <button type="button" id="save-button" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save</button>
         <button type="submit" id="submit-button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Submit</button>
         <button type="button" id="whatsapp-submit-button" class="bg-[#25D366] text-white px-4 py-2 rounded hover:bg-[#1ebe5a]">Submit via WhatsApp</button>
       </div>
 
     </form>
-
-    <!-- Saved leads list -->
-    <div id="leads-list" class="mt-6"></div>
 
   </main>
 
@@ -330,32 +326,17 @@
     const telemarketerId = "telemarketer_1"; // placeholder UID
 
     const form = document.getElementById('lead-form');
-    const saveButton = document.getElementById('save-button');
     const whatsappSubmitButton = document.getElementById('whatsapp-submit-button');
     const submitButton = document.getElementById('submit-button');
-    const leadsList = document.getElementById('leads-list');
 
-    // Load saved leads from localStorage
-    let leads = JSON.parse(localStorage.getItem('leads')) || [];
-
-    function renderLeads() {
-      leadsList.innerHTML = '';
-      leads.forEach((lead, index) => {
-        const div = document.createElement('div');
-        div.className = 'border p-3 rounded mb-2 bg-gray-50';
-        div.innerHTML = `
-          <strong>${lead.name || '(no name)'}</strong> - ${lead.category || ''}
-          <p>${lead.comment || ''}</p>
-          <button onclick="deleteLead(${index})" class="text-red-500 underline">Delete</button>
-        `;
-        leadsList.appendChild(div);
-      });
-    }
-
-    function deleteLead(index) {
-      leads.splice(index, 1);
-      localStorage.setItem('leads', JSON.stringify(leads));
-      renderLeads();
+    // Privacy/hygiene: this form never persists anything to the browser.
+    // Nothing is written to localStorage or sessionStorage, and any leftover
+    // data from a previous version of this page is wiped out on load.
+    try {
+      localStorage.removeItem('leads');
+      sessionStorage.clear();
+    } catch (err) {
+      console.warn('Storage cleanup skipped:', err);
     }
 
     function getFormData() {
@@ -365,34 +346,16 @@
       return data;
     }
 
-    function saveLead() {
-      const data = getFormData();
-      leads.push(data);
-      localStorage.setItem('leads', JSON.stringify(leads));
-      renderLeads();
-      alert('Lead saved locally!');
-      form.reset();
-    }
-    saveButton.addEventListener('click', saveLead);
-
-    async function flushLeadsToFirebase(currentLead) {
+    async function flushLeadToFirebase(currentLead) {
       await authReady;
-      const all = currentLead ? [...leads, currentLead] : [...leads];
-      for (const lead of all) {
-        try {
-          await db.collection('leads').add(lead);
-        } catch (err) {
-          console.error('Firebase save failed:', err);
-        }
-      }
-      localStorage.removeItem('leads');
-      leads = [];
-      renderLeads();
+      await db.collection('leads').add(currentLead);
     }
 
-    // Fixed: submit now sends the CURRENT form (not just previously saved
-    // leads), uses fetch so the page doesn't redirect away from the
-    // celebration, and only calls form.reset() after everything succeeds.
+    // Submit now sends the CURRENT form straight to Firebase + Formspree —
+    // nothing is ever written to localStorage/sessionStorage first, so
+    // there's no draft or cache left behind on this computer. The form
+    // resets the instant a submission succeeds; if something fails, the
+    // form is left as-is so the telemarketer can retry without retyping.
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       const currentLead = getFormData();
@@ -401,7 +364,7 @@
       submitButton.textContent = 'Submitting...';
 
       try {
-        await flushLeadsToFirebase(currentLead);
+        await flushLeadToFirebase(currentLead);
 
         const fd = new FormData(form);
         await fetch(form.action, {
@@ -422,7 +385,8 @@
     });
 
     // Submit via WhatsApp — compiles the form into a message and opens
-    // a chat to (415) 877-0687 with everything pre-filled.
+    // a chat to (415) 877-0687 with everything pre-filled, then clears
+    // the form immediately (nothing is saved to this browser either way).
     whatsappSubmitButton.addEventListener('click', function() {
       const data = getFormData();
       const lines = [
@@ -541,9 +505,6 @@
     }
 
     animateEmojis();
-
-    // Render initial leads
-    renderLeads();
   </script>
 
 </body>
