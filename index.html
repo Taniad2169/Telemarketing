@@ -3,20 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>The WebSwan Intake Form</title>
+  <title>WebSwan Digital Solutions Intake Form</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* ---------- FIXED NAV / DROPDOWN ---------- */
+    .navbar-fixed {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    /* The dropdown itself is fixed to the viewport under the nav */
+    .services-dropdown {
+      position: fixed;
+      top: 64px; /* height of navbar */
+      right: 1rem;
+      width: 18rem;
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+      background: #ffffff;
+      color: #111827;
+      border-radius: 0.5rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,.25);
+      display: none;
+      z-index: 1001;
+    }
+    .services-dropdown.open {
+      display: block;
+    }
+    .services-dropdown li span {
+      display: block;
+      padding: 0.6rem 1rem;
+      font-size: 0.875rem;
+      cursor: default;
+    }
+    .services-dropdown li span:hover {
+      background: #f3f4f6;
+    }
+
+    /* Push page content below the fixed navbar */
+    .page-offset {
+      padding-top: 64px;
+    }
+
+    /* Tighten overall container — remove loose gaps */
+    main {
+      margin-top: 0 !important;
+      border-radius: 0.5rem;
+    }
+
     .emoji {
       position: absolute;
       opacity: 0;
       transition: transform 2s ease, opacity 2s ease;
-    }
-    /* Fix dropdown appearing behind banner */
-    ul.absolute {
-      z-index: 50;
     }
 
     /* Highlighted "important" fields */
@@ -27,6 +71,17 @@
     .highlight-field:focus {
       outline: none;
       box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.5);
+    }
+
+    /* Phone & email highlight */
+    .contact-highlight {
+      background-color: #14395d;
+      color: #ffffff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      font-weight: 700;
+      display: inline-block;
+      letter-spacing: 0.3px;
     }
 
     /* Script tabs */
@@ -100,215 +155,262 @@
       transition: transform .15s ease;
     }
     #whatsapp-float:hover { transform: scale(1.08); }
+
+    /* Prevent layout shift / bounce */
+    body {
+      overflow-x: hidden;
+    }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
 
-  <!-- Navbar -->
-  <nav class="bg-[#14395d] text-white p-4">
-    <div class="max-w-7xl mx-auto flex justify-between items-center relative">
-      <div class="text-2xl font-bold">The WebSwan</div>
-      <ul class="flex space-x-6">
-        <!-- Services Dropdown -->
-        <li class="relative group">
-          <button class="hover:text-gray-300 font-semibold flex items-center">
+  <!-- Fixed Navbar -->
+  <nav class="navbar-fixed bg-[#14395d] text-white p-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="text-2xl font-bold">WebSwan Digital Solutions</div>
+      <ul class="flex space-x-6 items-center">
+        <li>
+          <button id="services-toggle" type="button" class="hover:text-gray-300 font-semibold flex items-center">
             Services
             <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
           </button>
-          <ul class="absolute left-0 mt-2 w-56 bg-white text-black rounded shadow-lg opacity-0 invisible transition-opacity duration-300 z-50 group-hover:opacity-100 group-hover:visible hover:opacity-100 hover:visible">
-            <li><a href="/free-website-demo" class="block px-4 py-2 hover:bg-gray-100">Free Website Demo</a></li>
-            <li><a href="/free-website-analysis" class="block px-4 py-2 hover:bg-gray-100">Free Website Analysis</a></li>
-            <li><a href="/interested-web-design" class="block px-4 py-2 hover:bg-gray-100">Interested in Web Design</a></li>
-            <li><a href="/landing-page" class="block px-4 py-2 hover:bg-gray-100">Landing Page</a></li>
-            <li><a href="/interactive-brand-hub" class="block px-4 py-2 hover:bg-gray-100 font-bold">Interactive Brand Hub</a></li>
-            <li><a href="/reputation-management" class="block px-4 py-2 hover:bg-gray-100">Reputation Management</a></li>
-            <li><a href="/ad-campaign" class="block px-4 py-2 hover:bg-gray-100">Ad Campaign</a></li>
-            <li><a href="/video" class="block px-4 py-2 hover:bg-gray-100">Video</a></li>
-            <li><a href="/other" class="block px-4 py-2 hover:bg-gray-100">Other</a></li>
-          </ul>
         </li>
       </ul>
     </div>
   </nav>
 
-  <!-- Header Banner -->
-  <header class="bg-[#14395d] text-[#b3ecf2] font-bold p-6 text-center relative overflow-visible">
-    <h1 class="text-3xl mb-2">The WebSwan Intake</h1>
-    <p>Phone: (415) 877-0687 | Email: thewebswann@gmail.com</p>
+  <!-- Fixed Services Dropdown (does not move the page) -->
+  <ul id="services-dropdown" class="services-dropdown">
+    <li><span>Free Website Demo</span></li>
+    <li><span>Landing Page</span></li>
+    <li><span>UX/UI Web Development</span></li>
+    <li><span>Software Development</span></li>
+    <li><span>SBPA (Small Business Phone Application)</span></li>
+    <li><span>E-Cards</span></li>
+    <li><span>Compliance Banners</span></li>
+    <li><span>Compliance Audit</span></li>
+    <li><span>Website Audit for Functionality</span></li>
+  </ul>
 
-    <!-- Emoji container -->
-    <div id="emoji-container" class="relative h-12 mt-4"></div>
-  </header>
+  <!-- Page content offset for fixed nav -->
+  <div class="page-offset">
 
-  <main class="max-w-4xl mx-auto mt-6 p-4 bg-white shadow-md rounded-lg">
+    <!-- Header Banner -->
+    <header class="bg-[#14395d] text-[#b3ecf2] font-bold p-6 text-center relative overflow-visible">
+      <h1 class="text-3xl mb-2">WebSwan Digital Solutions Intake</h1>
+      <p class="flex flex-wrap justify-center items-center gap-2 text-sm">
+        <span class="contact-highlight">📞 (415) 877-0687</span>
+        <span class="contact-highlight">✉️ thewebswann@gmail.com</span>
+      </p>
 
-    <!-- Telemarketer Scripts -->
+      <!-- Emoji container -->
+      <div id="emoji-container" class="relative h-12 mt-4"></div>
+    </header>
 
-    <!-- Time Zone Checker -->
-    <div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-md">
-      <label for="tz-state-select" class="block text-sm font-bold text-indigo-900 mb-1">&#128337; Check Their Time Zone Before You Call</label>
-      <select id="tz-state-select" class="w-full p-2 rounded-md border border-indigo-300 mb-2">
-        <option value="">Select Prospect's State&hellip;</option>
-        <option value="America/New_York">New York (Eastern)</option>
-        <option value="America/New_York">Florida (Eastern)</option>
-        <option value="America/Denver">Utah (Mountain)</option>
-        <option value="America/Chicago">Texas (Central)</option>
-        <option value="America/New_York">Georgia (Eastern)</option>
-        <option value="America/Los_Angeles">California (Pacific)</option>
-        <option value="America/New_York">New Jersey (Eastern)</option>
-        <option value="America/Los_Angeles">Nevada (Pacific)</option>
-      </select>
-      <p id="tz-current-time" class="text-lg font-bold text-indigo-900"></p>
-    </div>
-    <script>
-      (function() {
-        var tzSelect = document.getElementById('tz-state-select');
-        var tzDisplay = document.getElementById('tz-current-time');
-        var tzInterval = null;
-        function updateTzDisplay() {
-          var tz = tzSelect.value;
-          if (!tz) { tzDisplay.textContent = ''; return; }
-          var label = tzSelect.options[tzSelect.selectedIndex].text;
-          var now = new Date();
-          var timeStr = now.toLocaleTimeString('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true });
-          tzDisplay.textContent = label + ': ' + timeStr + ' right now';
-        }
-        tzSelect.addEventListener('change', function() {
-          updateTzDisplay();
-          if (tzInterval) clearInterval(tzInterval);
-          if (tzSelect.value) { tzInterval = setInterval(updateTzDisplay, 30000); }
-        });
-      })();
-    </script>
+    <main class="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg">
 
-    <div class="mb-6">
-      <p class="italic text-gray-700 mb-2">Call Scripts — tap a track:</p>
-      <div class="flex flex-wrap gap-2 mb-3">
-        <button type="button" class="script-tab-btn active px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="medical">Medical Practices</button>
-        <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="legal">Law Firms</button>
-        <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="gatekeeper">Gatekeeper Pivot</button>
-        <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="followup">Follow-Up Hook</button>
-          <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="receptionist">Virtual Receptionist</button>
-      </div>
-
-      <div class="p-4 bg-blue-50 rounded-md">
-        <div id="script-medical" class="script-panel active">
-          <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Track 1 · Medical Practices &amp; Doctors</p>
-          <p class="text-gray-900 font-bold text-lg leading-relaxed">
-            "Hi [Doctor's Name / Practice Manager], this is <span class="text-blue-600">[Caller Name]</span> with The WebSwan. We specialize in technical intake and digital compliance for medical practices. We ran a complimentary digital audit on your site, and noticed a few visibility and data-intake gaps that don't yet align with updated ADA and privacy standards for patients submitting information online — this is something we help practices get ahead of before it becomes an issue. Can I confirm the best email to send this report over for your review?"
-          </p>
-        </div>
-        <div id="script-legal" class="script-panel">
-          <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Track 2 · Law Firms &amp; Attorneys</p>
-          <p class="text-gray-900 font-bold text-lg leading-relaxed">
-            "Hi [Attorney Name / Managing Partner], this is <span class="text-blue-600">[Caller Name]</span> with The WebSwan. We work specifically with law practices on client acquisition and digital intake security. While reviewing your online presence, we identified a few privacy and confidentiality gaps in your intake forms relative to current State Bar data standards. We put together a complimentary technical assessment — who's the best person to send that one-page breakdown to today?"
-          </p>
-        </div>
-        <div id="script-gatekeeper" class="script-panel">
-          <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">The Gatekeeper Pivot · Receptionist / Front Desk</p>
-          <p class="text-gray-600 text-sm mb-2">Frame the call as a routine compliance follow-up, not a sales pitch:</p>
-          <p class="text-gray-900 font-bold text-lg leading-relaxed">
-            "Hi, this is <span class="text-blue-600">[Caller Name]</span> with The WebSwan. I'm following up on a routine digital intake and security assessment we completed for [Practice/Firm Name]. Who's your Practice Administrator or Office Manager that handles digital compliance and website operations?"
-          </p>
-        </div>
-        <div id="script-followup" class="script-panel">
-          <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">The Follow-Up Hook · Email + Call, 24 Hours Later</p>
-          <p class="text-gray-900 font-bold text-lg leading-relaxed">
-            "Hi [Name], this is <span class="text-blue-600">[Caller Name]</span> following up on the digital audit we emailed over ______ (yesterday, Monday, last week). Our technical director flagged two quick items on your intake security and digital compliance — your site is missing visible ADA and privacy banners, which is one of the first things regulators and legal teams check. When do you have 10 minutes to walk through what we found?"
-          </p>
-        </div>
-      <div id="script-receptionist" class="script-panel">
-        <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Virtual Receptionist &middot; The 30-Second Cold Outreach Script (26 sec / 71 words)</p>
-        <p class="text-gray-900 font-bold text-lg leading-relaxed">
-          "Hi [Business Owner / Doctor / Attorney], this is <span class="text-blue-600">[Caller Name]</span> with The WebSwan. Most practices lose up to 60% of new inquiries simply because they can't answer while with clients&mdash;and those callers immediately dial a competitor. We set up dedicated, 24/7 multilingual receptionists trained specifically on your business to answer questions, capture leads, and book appointments day or night&mdash;giving you complete peace of mind. Can I email you a quick 2-minute demo of how she answers for your office?"
-        </p>
-        <div class="mt-3 space-y-2">
-          <p class="text-xs uppercase tracking-wide text-blue-700 font-bold">Recommended Rebuttal Handling</p>
-          <p class="text-sm text-gray-800"><span class="font-bold">Objection: "We already have a front desk receptionist."</span><br>"She isn't meant to replace your staff&mdash;she covers the gaps when your lines are busy, during lunch, and after 5:00 PM so zero callers ever hit voicemail."</p>
-          <p class="text-sm text-gray-800"><span class="font-bold">Objection: "Is this an annoying automated robot?"</span><br>"Not at all. She speaks naturally, handles English and Spanish seamlessly, knows your business FAQs, and sounds like a live team member. I can have her call your test line right now so you can hear her for yourself."</p>
-          <p class="text-sm text-gray-800"><span class="font-bold">Objection: "How much does it cost?"</span><br>"While traditional answering services charge $400 to $1,000 a month with strict minute caps, our fully managed 24/7 receptionist is a flat $199 to $299 a month&mdash;saving just one missed client covers the entire year."</p>
-        </div>
-      </div>
-      </div>
-
-      <!-- Authority footer note -->
-      <div class="mt-3 border-l-4 border-[#14395d] bg-gray-50 p-4 rounded-r-md">
-        <p class="text-xs uppercase tracking-wide text-[#14395d] font-bold mb-1">If They Ask: "What Is ADA / Privacy Compliance?"</p>
-        <p class="text-gray-800 text-sm leading-relaxed">
-          "Every state has its own regulations for a business's online presence — your website is legally treated as an extension of your practice, so it needs to be in compliance with the rules where you're licensed. Penalties can be issued without advance warning. When our audit tool flags a site, that same finding can be reported to the state attorney's office — so we always send you the direct link to verify it yourself when we send the audit over. What's the best email, and who should we send it to?"
-        </p>
-                <p class="text-xs uppercase tracking-wide text-[#14395d] font-bold mt-3 mb-1">Rebuttal: "That Won't Happen To Us"</p>
-        <p class="text-gray-800 text-sm leading-relaxed">
-          "These penalties are real — there have already been lawsuits in the state of ________, and you can verify that yourself on Google right now. Sephora was fined $1.2 million for website compliance violations — just search &ldquo;Sephora website compliance penalty&rdquo; and you'll see it. Think about it this way — people wake up in the morning, get ready for work, and get in their car, and some of them end up in a car accident that day &mdash; but nobody plans on getting into an accident, right?" <span class="italic">(pause and let them answer)</span> "It's the same with these penalties — they come with zero warning. You could walk into your office one day and find a notice sitting right there in your mailbox. Better to be safe than sorry."
-        </p>
-      </div>
-    </div>
-
-    <!-- Intake Form -->
-    <form id="lead-form" class="space-y-4" action="https://formspree.io/f/mnngbyyr" method="POST" novalidate autocomplete="off">
-
-      <!-- Decision Maker — highlighted, not required -->
-      <div class="p-3 rounded-md border-2 border-yellow-400 bg-yellow-50">
-        <p class="text-xs font-bold uppercase tracking-wide text-yellow-800 mb-2">⭐ Most Important — Get This If Nothing Else</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input type="text" name="decisionMakerName" placeholder="Decision Maker Name" class="highlight-field border p-2 rounded w-full" autocomplete="off">
-          <select name="decisionMakerRole" class="highlight-field border p-2 rounded w-full" autocomplete="off">
-            <option value="">Decision Maker Role</option>
-            <option value="Owner">Owner</option>
-            <option value="Doctor">Doctor</option>
-            <option value="Office Manager">Office Manager</option>
-            <option value="Attorney">Attorney</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input type="text" name="name" placeholder="Lead Name" class="border p-2 rounded w-full" autocomplete="off">
-        <input type="tel" name="phone" placeholder="Phone Number" class="border p-2 rounded w-full" autocomplete="off">
-        <input type="email" name="email" placeholder="Email" class="border p-2 rounded w-full" autocomplete="off">
-        <input type="text" name="companyName" placeholder="Company Name" class="border p-2 rounded w-full" autocomplete="off">
-        <input type="text" name="industry" placeholder="Industry" class="border p-2 rounded w-full" autocomplete="off">
-        <input type="url" name="website" placeholder="Website (if any)" class="border p-2 rounded w-full" autocomplete="off">
-        <input type="text" name="serviceInterested" placeholder="Service Interested" class="border p-2 rounded w-full" autocomplete="off">
-        <input type="number" name="callsMadeToday" placeholder="Calls Made Today" class="border p-2 rounded w-full" min="0" autocomplete="off">
-        <input type="number" name="interestedCountToday" placeholder="Interested Leads Today" class="border p-2 rounded w-full" min="0" autocomplete="off">
-      </div>
-
-      <label class="block">
-        Category:
-        <select name="category" class="border p-2 rounded w-full" autocomplete="off">
-          <option value="Call Back">Call Back</option>
-          <option value="Wants a Demo">Wants a Demo</option>
-          <option value="Wants a Free Website Analysis">Wants a Free Website Analysis</option>
-          <option value="Wants an Email">Wants an Email</option>
-          <option value="Interested/Hot Lead">Interested/Hot Lead</option>
+      <!-- Time Zone Checker -->
+      <div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-md">
+        <label for="tz-state-select" class="block text-sm font-bold text-indigo-900 mb-1">&#128337; Check Their Time Zone Before You Call</label>
+        <select id="tz-state-select" class="w-full p-2 rounded-md border border-indigo-300 mb-2">
+          <option value="">Select Prospect's State&hellip;</option>
+          <option value="America/New_York">New York (Eastern)</option>
+          <option value="America/New_York">Florida (Eastern)</option>
+          <option value="America/Denver">Utah (Mountain)</option>
+          <option value="America/Chicago">Texas (Central)</option>
+          <option value="America/New_York">Georgia (Eastern)</option>
+          <option value="America/Los_Angeles">California (Pacific)</option>
+          <option value="America/New_York">New Jersey (Eastern)</option>
+          <option value="America/Los_Angeles">Nevada (Pacific)</option>
         </select>
-      </label>
+        <p id="tz-current-time" class="text-lg font-bold text-indigo-900"></p>
+      </div>
+      <script>
+        (function() {
+          var tzSelect = document.getElementById('tz-state-select');
+          var tzDisplay = document.getElementById('tz-current-time');
+          var tzInterval = null;
+          function updateTzDisplay() {
+            var tz = tzSelect.value;
+            if (!tz) { tzDisplay.textContent = ''; return; }
+            var label = tzSelect.options[tzSelect.selectedIndex].text;
+            var now = new Date();
+            var timeStr = now.toLocaleTimeString('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true });
+            tzDisplay.textContent = label + ': ' + timeStr + ' right now';
+          }
+          tzSelect.addEventListener('change', function() {
+            updateTzDisplay();
+            if (tzInterval) clearInterval(tzInterval);
+            if (tzSelect.value) { tzInterval = setInterval(updateTzDisplay, 30000); }
+          });
+        })();
+      </script>
 
-      <label class="block">
-        Comments (max 400 characters):
-        <textarea name="comment" maxlength="400" class="border p-2 rounded w-full h-24" autocomplete="off"></textarea>
-      </label>
+      <div class="mb-6">
+        <p class="italic text-gray-700 mb-2">Call Scripts — tap a track:</p>
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button type="button" class="script-tab-btn active px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="medical">Medical Practices</button>
+          <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="legal">Law Firms</button>
+          <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="gatekeeper">Gatekeeper Pivot</button>
+          <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="followup">Follow-Up Hook</button>
+          <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="receptionist">Virtual Receptionist</button>
+        </div>
 
-      <div class="flex flex-wrap gap-3 mt-4">
-        <button type="submit" id="submit-button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Submit</button>
-        <button type="button" id="whatsapp-submit-button" class="bg-[#25D366] text-white px-4 py-2 rounded hover:bg-[#1ebe5a]">Submit via WhatsApp</button>
+        <div class="p-4 bg-blue-50 rounded-md">
+          <div id="script-medical" class="script-panel active">
+            <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Track 1 · Medical Practices &amp; Doctors</p>
+            <p class="text-gray-900 font-bold text-lg leading-relaxed">
+              "Hi [Doctor's Name / Practice Manager], this is <span class="text-blue-600">[Caller Name]</span> with WebSwan Digital Solutions. We specialize in technical intake and digital compliance for medical practices. We ran a complimentary digital audit on your site, and noticed a few visibility and data-intake gaps that don't yet align with updated ADA and privacy standards for patients submitting information online — this is something we help practices get ahead of before it becomes an issue. Can I confirm the best email to send this report over for your review?"
+            </p>
+          </div>
+          <div id="script-legal" class="script-panel">
+            <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Track 2 · Law Firms &amp; Attorneys</p>
+            <p class="text-gray-900 font-bold text-lg leading-relaxed">
+              "Hi [Attorney Name / Managing Partner], this is <span class="text-blue-600">[Caller Name]</span> with WebSwan Digital Solutions. We work specifically with law practices on client acquisition and digital intake security. While reviewing your online presence, we identified a few privacy and confidentiality gaps in your intake forms relative to current State Bar data standards. We put together a complimentary technical assessment — who's the best person to send that one-page breakdown to today?"
+            </p>
+          </div>
+          <div id="script-gatekeeper" class="script-panel">
+            <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">The Gatekeeper Pivot · Receptionist / Front Desk</p>
+            <p class="text-gray-600 text-sm mb-2">Frame the call as a routine compliance follow-up, not a sales pitch:</p>
+            <p class="text-gray-900 font-bold text-lg leading-relaxed">
+              "Hi, this is <span class="text-blue-600">[Caller Name]</span> with WebSwan Digital Solutions. I'm following up on a routine digital intake and security assessment we completed for [Practice/Firm Name]. Who's your Practice Administrator or Office Manager that handles digital compliance and website operations?"
+            </p>
+          </div>
+          <div id="script-followup" class="script-panel">
+            <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">The Follow-Up Hook · Email + Call, 24 Hours Later</p>
+            <p class="text-gray-900 font-bold text-lg leading-relaxed">
+              "Hi [Name], this is <span class="text-blue-600">[Caller Name]</span> following up on the digital audit we emailed over ______ (yesterday, Monday, last week). Our technical director flagged two quick items on your intake security and digital compliance — your site is missing visible ADA and privacy banners, which is one of the first things regulators and legal teams check. When do you have 10 minutes to walk through what we found?"
+            </p>
+          </div>
+          <div id="script-receptionist" class="script-panel">
+            <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Virtual Receptionist &middot; The 30-Second Cold Outreach Script (26 sec / 71 words)</p>
+            <p class="text-gray-900 font-bold text-lg leading-relaxed">
+              "Hi [Business Owner / Doctor / Attorney], this is <span class="text-blue-600">[Caller Name]</span> with WebSwan Digital Solutions. Most practices lose up to 60% of new inquiries simply because they can't answer while with clients&mdash;and those callers immediately dial a competitor. We set up dedicated, 24/7 multilingual receptionists trained specifically on your business to answer questions, capture leads, and book appointments day or night&mdash;giving you complete peace of mind. Can I email you a quick 2-minute demo of how she answers for your office?"
+            </p>
+            <div class="mt-3 space-y-2">
+              <p class="text-xs uppercase tracking-wide text-blue-700 font-bold">Recommended Rebuttal Handling</p>
+              <p class="text-sm text-gray-800"><span class="font-bold">Objection: "We already have a front desk receptionist."</span><br>"She isn't meant to replace your staff&mdash;she covers the gaps when your lines are busy, during lunch, and after 5:00 PM so zero callers ever hit voicemail."</p>
+              <p class="text-sm text-gray-800"><span class="font-bold">Objection: "Is this an annoying automated robot?"</span><br>"Not at all. She speaks naturally, handles English and Spanish seamlessly, knows your business FAQs, and sounds like a live team member. I can have her call your test line right now so you can hear her for yourself."</p>
+              <p class="text-sm text-gray-800"><span class="font-bold">Objection: "How much does it cost?"</span><br>"While traditional answering services charge $400 to $1,000 a month with strict minute caps, our fully managed 24/7 receptionist is a flat $199 to $299 a month&mdash;saving just one missed client covers the entire year."</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Authority footer note -->
+        <div class="mt-3 border-l-4 border-[#14395d] bg-gray-50 p-4 rounded-r-md">
+          <p class="text-xs uppercase tracking-wide text-[#14395d] font-bold mb-1">If They Ask: "What Is ADA / Privacy Compliance?"</p>
+          <p class="text-gray-800 text-sm leading-relaxed">
+            "Every state has its own regulations for a business's online presence — your website is legally treated as an extension of your practice, so it needs to be in compliance with the rules where you're licensed. Penalties can be issued without advance warning. When our audit tool flags a site, that same finding can be reported to the state attorney's office — so we always send you the direct link to verify it yourself when we send the audit over. What's the best email, and who should we send it to?"
+          </p>
+          <p class="text-xs uppercase tracking-wide text-[#14395d] font-bold mt-3 mb-1">Rebuttal: "That Won't Happen To Us"</p>
+          <p class="text-gray-800 text-sm leading-relaxed">
+            "These penalties are real — there have already been lawsuits in the state of ________, and you can verify that yourself on Google right now. Sephora was fined $1.2 million for website compliance violations — just search &ldquo;Sephora website compliance penalty&rdquo; and you'll see it. Think about it this way — people wake up in the morning, get ready for work, and get in their car, and some of them end up in a car accident that day &mdash; but nobody plans on getting into an accident, right?" <span class="italic">(pause and let them answer)</span> "It's the same with these penalties — they come with zero warning. You could walk into your office one day and find a notice sitting right there in your mailbox. Better to be safe than sorry."
+          </p>
+        </div>
       </div>
 
-    </form>
+      <!-- Intake Form -->
+      <form id="lead-form" class="space-y-4" action="https://formspree.io/f/mnngbyyr" method="POST" novalidate autocomplete="off">
 
-  </main>
+        <!-- Decision Maker — highlighted -->
+        <div class="p-3 rounded-md border-2 border-yellow-400 bg-yellow-50">
+          <p class="text-xs font-bold uppercase tracking-wide text-yellow-800 mb-2">⭐ Most Important — Get This If Nothing Else</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" name="decisionMakerName" placeholder="Decision Maker Name" class="highlight-field border p-2 rounded w-full" autocomplete="off">
+            <select name="decisionMakerRole" class="highlight-field border p-2 rounded w-full" autocomplete="off">
+              <option value="">Decision Maker Role</option>
+              <option value="Owner">Owner</option>
+              <option value="Doctor">Doctor</option>
+              <option value="Office Manager">Office Manager</option>
+              <option value="Attorney">Attorney</option>
+            </select>
+          </div>
+        </div>
 
-  <!-- Floating quick-message WhatsApp button (always available, no form data) -->
-  <a id="whatsapp-float" href="https://wa.me/14158770687?text=Hi%2C%20I%27d%20like%20to%20connect%20about%20The%20WebSwan." target="_blank" rel="noopener" title="Message us on WhatsApp">💬</a>
+        <!-- Additional Important Fields: Phone, Email, Company Name -->
+        <div class="p-3 rounded-md border-2 border-yellow-400 bg-yellow-50">
+          <p class="text-xs font-bold uppercase tracking-wide text-yellow-800 mb-2">📌 Key Contact &amp; Company Details (Priority)</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input type="tel" name="phone" placeholder="📞 Phone Number" class="highlight-field border p-2 rounded w-full" autocomplete="off">
+            <input type="email" name="email" placeholder="✉️ Email Address" class="highlight-field border p-2 rounded w-full" autocomplete="off">
+            <input type="text" name="companyName" placeholder="🏢 Company Name" class="highlight-field border p-2 rounded w-full" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input type="text" name="name" placeholder="Lead Name" class="border p-2 rounded w-full" autocomplete="off">
+          <input type="text" name="industry" placeholder="Industry" class="border p-2 rounded w-full" autocomplete="off">
+          <input type="url" name="website" placeholder="Website (if any)" class="border p-2 rounded w-full" autocomplete="off">
+          <input type="text" name="serviceInterested" placeholder="Service Interested" class="border p-2 rounded w-full" autocomplete="off">
+          <input type="number" name="callsMadeToday" placeholder="Calls Made Today" class="border p-2 rounded w-full" min="0" autocomplete="off">
+          <input type="number" name="interestedCountToday" placeholder="Interested Leads Today" class="border p-2 rounded w-full" min="0" autocomplete="off">
+        </div>
+
+        <label class="block">
+          Category:
+          <select name="category" class="border p-2 rounded w-full" autocomplete="off">
+            <option value="Call Back">Call Back</option>
+            <option value="Wants a Demo">Wants a Demo</option>
+            <option value="Wants a Free Website Analysis">Wants a Free Website Analysis</option>
+            <option value="Wants an Email">Wants an Email</option>
+            <option value="Interested/Hot Lead">Interested/Hot Lead</option>
+            <option value="Not Interested">Not Interested</option>
+            <option value="No Answer">No Answer</option>
+            <option value="Voicemail">Voicemail</option>
+            <option value="Has a Marketing Department">Has a Marketing Department</option>
+            <option value="Has IT Department">Has IT Department</option>
+            <option value="Don't Call Again">Don't Call Again</option>
+          </select>
+        </label>
+
+        <label class="block">
+          Comments (max 400 characters):
+          <textarea name="comment" maxlength="400" class="border p-2 rounded w-full h-24" autocomplete="off"></textarea>
+        </label>
+
+        <div class="flex flex-wrap gap-3 mt-4">
+          <button type="submit" id="submit-button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Submit</button>
+          <button type="button" id="whatsapp-submit-button" class="bg-[#25D366] text-white px-4 py-2 rounded hover:bg-[#1ebe5a]">Send a WhatsApp Message to (415) 877-0687</button>
+        </div>
+
+      </form>
+
+    </main>
+  </div>
+
+  <!-- Floating quick-message WhatsApp button -->
+  <a id="whatsapp-float" href="https://wa.me/14158770687?text=Hi%2C%20I%27d%20like%20to%20connect%20about%20WebSwan%20Digital%20Solutions." target="_blank" rel="noopener" title="Message us on WhatsApp">💬</a>
 
   <!-- Celebration overlay -->
   <div id="celebration-overlay"></div>
   <div id="celebration-message">🎉 Lead Submitted! 🎉<br><span class="text-sm font-normal">Great work — keep the momentum going.</span></div>
 
   <script>
+    // ---------- Services dropdown toggle (fixed, no page shift) ----------
+    (function() {
+      var toggle = document.getElementById('services-toggle');
+      var dropdown = document.getElementById('services-dropdown');
+
+      toggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');
+      });
+
+      // Close when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!dropdown.contains(e.target) && e.target !== toggle && !toggle.contains(e.target)) {
+          dropdown.classList.remove('open');
+        }
+      });
+
+      // Close on scroll (since it is fixed, keep it tidy)
+      window.addEventListener('scroll', function() {
+        dropdown.classList.remove('open');
+      }, { passive: true });
+    })();
+
     // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyAqhqUzWqpS7YunkODJU_udTBG3pjsJegQ",
@@ -323,15 +425,12 @@
     const db = firebase.firestore();
     const authReady = firebase.auth().signInAnonymously().catch(function(err) { console.error('Anonymous sign-in failed:', err); });
 
-    const telemarketerId = "telemarketer_1"; // placeholder UID
+    const telemarketerId = "telemarketer_1";
 
     const form = document.getElementById('lead-form');
     const whatsappSubmitButton = document.getElementById('whatsapp-submit-button');
     const submitButton = document.getElementById('submit-button');
 
-    // Privacy/hygiene: this form never persists anything to the browser.
-    // Nothing is written to localStorage or sessionStorage, and any leftover
-    // data from a previous version of this page is wiped out on load.
     try {
       localStorage.removeItem('leads');
       sessionStorage.clear();
@@ -351,11 +450,6 @@
       await db.collection('leads').add(currentLead);
     }
 
-    // Submit now sends the CURRENT form straight to Firebase + Formspree —
-    // nothing is ever written to localStorage/sessionStorage first, so
-    // there's no draft or cache left behind on this computer. The form
-    // resets the instant a submission succeeds; if something fails, the
-    // form is left as-is so the telemarketer can retry without retyping.
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       const currentLead = getFormData();
@@ -384,13 +478,11 @@
       }
     });
 
-    // Submit via WhatsApp — compiles the form into a message and opens
-    // a chat to (415) 877-0687 with everything pre-filled, then clears
-    // the form immediately (nothing is saved to this browser either way).
+    // Submit via WhatsApp — compiles form into a message and opens chat to (415) 877-0687
     whatsappSubmitButton.addEventListener('click', function() {
       const data = getFormData();
       const lines = [
-        '*New Lead — The WebSwan*',
+        '*New Lead — WebSwan Digital Solutions*',
         data.decisionMakerName ? `Decision Maker: ${data.decisionMakerName}${data.decisionMakerRole ? ' (' + data.decisionMakerRole + ')' : ''}` : null,
         data.name ? `Lead Name: ${data.name}` : null,
         data.phone ? `Phone: ${data.phone}` : null,
@@ -419,11 +511,11 @@
       });
     });
 
-    // --- 10-second celebration: falling emojis + a little audio fanfare ---
+    // Celebration
     function playFanfare() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+        const notes = [523.25, 659.25, 783.99, 1046.5];
         notes.forEach((freq, i) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -477,7 +569,7 @@
       }, 10000);
     }
 
-    // Header emoji animation (unchanged)
+    // Header emoji animation
     const emojis = ['💪','💡','💯','💰','🎯','🔔','🌐','💻'];
     const container = document.getElementById('emoji-container');
 
