@@ -18,10 +18,9 @@
       z-index: 1000;
     }
 
-    /* The dropdown itself is fixed to the viewport under the nav */
     .services-dropdown {
       position: fixed;
-      top: 64px; /* height of navbar */
+      top: 64px;
       right: 1rem;
       width: 18rem;
       max-height: calc(100vh - 80px);
@@ -46,12 +45,10 @@
       background: #f3f4f6;
     }
 
-    /* Push page content below the fixed navbar */
     .page-offset {
       padding-top: 64px;
     }
 
-    /* Tighten overall container — remove loose gaps */
     main {
       margin-top: 0 !important;
       border-radius: 0.5rem;
@@ -156,7 +153,6 @@
     }
     #whatsapp-float:hover { transform: scale(1.08); }
 
-    /* Prevent layout shift / bounce */
     body {
       overflow-x: hidden;
     }
@@ -181,7 +177,7 @@
     </div>
   </nav>
 
-  <!-- Fixed Services Dropdown (does not move the page) -->
+  <!-- Fixed Services Dropdown -->
   <ul id="services-dropdown" class="services-dropdown">
     <li><span>Free Website Demo</span></li>
     <li><span>Landing Page</span></li>
@@ -194,7 +190,6 @@
     <li><span>Website Audit for Functionality</span></li>
   </ul>
 
-  <!-- Page content offset for fixed nav -->
   <div class="page-offset">
 
     <!-- Header Banner -->
@@ -205,7 +200,6 @@
         <span class="contact-highlight">✉️ thewebswann@gmail.com</span>
       </p>
 
-      <!-- Emoji container -->
       <div id="emoji-container" class="relative h-12 mt-4"></div>
     </header>
 
@@ -348,22 +342,25 @@
           <input type="number" name="interestedCountToday" placeholder="Interested Leads Today" class="border p-2 rounded w-full" min="0" autocomplete="off">
         </div>
 
-        <label class="block">
-          Category:
-          <select name="category" class="border p-2 rounded w-full" autocomplete="off">
-            <option value="Call Back">Call Back</option>
-            <option value="Wants a Demo">Wants a Demo</option>
-            <option value="Wants a Free Website Analysis">Wants a Free Website Analysis</option>
-            <option value="Wants an Email">Wants an Email</option>
-            <option value="Interested/Hot Lead">Interested/Hot Lead</option>
-            <option value="Not Interested">Not Interested</option>
-            <option value="No Answer">No Answer</option>
-            <option value="Voicemail">Voicemail</option>
-            <option value="Has a Marketing Department">Has a Marketing Department</option>
-            <option value="Has IT Department">Has IT Department</option>
-            <option value="Don't Call Again">Don't Call Again</option>
-          </select>
-        </label>
+        <!-- Category — highlighted -->
+        <div class="p-3 rounded-md border-2 border-yellow-400 bg-yellow-50">
+          <p class="text-xs font-bold uppercase tracking-wide text-yellow-800 mb-2">📂 Category (Priority)</p>
+          <label class="block">
+            <select name="category" class="highlight-field border p-2 rounded w-full" autocomplete="off">
+              <option value="Call Back">Call Back</option>
+              <option value="Wants a Demo">Wants a Demo</option>
+              <option value="Wants a Free Website Analysis">Wants a Free Website Analysis</option>
+              <option value="Wants an Email">Wants an Email</option>
+              <option value="Interested/Hot Lead">Interested/Hot Lead</option>
+              <option value="Not Interested">Not Interested</option>
+              <option value="No Answer">No Answer</option>
+              <option value="Voicemail">Voicemail</option>
+              <option value="Has a Marketing Department">Has a Marketing Department</option>
+              <option value="Has IT Department">Has IT Department</option>
+              <option value="Don't Call Again">Don't Call Again</option>
+            </select>
+          </label>
+        </div>
 
         <label class="block">
           Comments (max 400 characters):
@@ -388,7 +385,7 @@
   <div id="celebration-message">🎉 Lead Submitted! 🎉<br><span class="text-sm font-normal">Great work — keep the momentum going.</span></div>
 
   <script>
-    // ---------- Services dropdown toggle (fixed, no page shift) ----------
+    // ---------- Services dropdown toggle ----------
     (function() {
       var toggle = document.getElementById('services-toggle');
       var dropdown = document.getElementById('services-dropdown');
@@ -398,14 +395,12 @@
         dropdown.classList.toggle('open');
       });
 
-      // Close when clicking outside
       document.addEventListener('click', function(e) {
         if (!dropdown.contains(e.target) && e.target !== toggle && !toggle.contains(e.target)) {
           dropdown.classList.remove('open');
         }
       });
 
-      // Close on scroll (since it is fixed, keep it tidy)
       window.addEventListener('scroll', function() {
         dropdown.classList.remove('open');
       }, { passive: true });
@@ -450,6 +445,7 @@
       await db.collection('leads').add(currentLead);
     }
 
+    // Submit button — sends to Firebase + Formspree, then celebrates
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       const currentLead = getFormData();
@@ -478,7 +474,7 @@
       }
     });
 
-    // Submit via WhatsApp — compiles form into a message and opens chat to (415) 877-0687
+    // Submit via WhatsApp — opens chat with form data, no celebration
     whatsappSubmitButton.addEventListener('click', function() {
       const data = getFormData();
       const lines = [
@@ -497,7 +493,6 @@
 
       const url = 'https://wa.me/14158770687?text=' + encodeURIComponent(lines);
       window.open(url, '_blank');
-      celebrate();
       form.reset();
     });
 
@@ -511,7 +506,7 @@
       });
     });
 
-    // Celebration
+    // Celebration (only for main Submit button)
     function playFanfare() {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
