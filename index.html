@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>WebSwan Digital Solutions Intake Form</title>
+  <title>Telemarketing Intake Form</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -91,6 +91,61 @@
     }
     .script-panel { display: none; }
     .script-panel.active { display: block; }
+
+    /* Link / share cards */
+    .link-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.85rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .link-card a.link-url {
+      color: #1d4ed8;
+      text-decoration: underline;
+      word-break: break-all;
+      font-size: 0.8rem;
+    }
+    .btn-open {
+      background: #14395d;
+      color: #fff;
+    }
+    .btn-open:hover { opacity: .9; }
+    .btn-copy {
+      border: 1px solid #14395d;
+      color: #14395d;
+      background: #fff;
+    }
+    .btn-copy:hover { background: #14395d; color: #fff; }
+    .btn-share {
+      background: #16a34a;
+      color: #fff;
+    }
+    .btn-share:hover { background: #15803d; }
+
+    /* Toast feedback */
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 96px;
+      transform: translateX(-50%) translateY(20px);
+      background: #14395d;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease, transform .25s ease;
+      z-index: 10001;
+      max-width: 90vw;
+      text-align: center;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     /* Celebration overlay */
     #celebration-overlay {
@@ -194,7 +249,7 @@
 
     <!-- Header Banner -->
     <header class="bg-[#14395d] text-[#b3ecf2] font-bold p-6 text-center relative overflow-visible">
-      <h1 class="text-3xl mb-2">WebSwan Digital Solutions Intake</h1>
+      <h1 class="text-3xl mb-2">Telemarketing Intake Form</h1>
       <p class="flex flex-wrap justify-center items-center gap-2 text-sm">
         <span class="contact-highlight">📞 (415) 877-0687</span>
         <span class="contact-highlight">✉️ thewebswann@gmail.com</span>
@@ -338,6 +393,96 @@
           <p class="text-gray-800 text-sm leading-relaxed">
             "These penalties are real — there have already been lawsuits in the state of ________, and you can verify that yourself on Google right now. Sephora was fined $1.2 million for website compliance violations — just search &ldquo;Sephora website compliance penalty&rdquo; and you'll see it. Think about it this way — people wake up in the morning, get ready for work, and get in their car, and some of them end up in a car accident that day &mdash; but nobody plans on getting into an accident, right?" <span class="italic">(pause and let them answer)</span> "It's the same with these penalties — they come with zero warning. You could walk into your office one day and find a notice sitting right there in your mailbox. Better to be safe than sorry."
           </p>
+
+          <!-- NEW: Official ADA / DOJ link -->
+          <p class="text-xs uppercase tracking-wide text-[#14395d] font-bold mt-4 mb-1">Official Source — ADA &amp; U.S. Dept. of Justice</p>
+          <div class="bg-white border border-gray-200 rounded-md p-3">
+            <p class="text-sm font-bold text-gray-900">ADA &amp; U.S. Dept. of Justice — Web Accessibility &amp; the ADA</p>
+            <a href="https://www.ada.gov/resources/web-guidance/" target="_blank" rel="noopener" class="link-url">https://www.ada.gov/resources/web-guidance/</a>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <a href="https://www.ada.gov/resources/web-guidance/" target="_blank" rel="noopener" class="btn-open px-3 py-1.5 rounded-md text-sm font-semibold">Open</a>
+              <button type="button" class="copy-btn btn-copy px-3 py-1.5 rounded-md text-sm font-semibold" data-copy="https://www.ada.gov/resources/web-guidance/">Copy Link</button>
+              <button type="button" class="share-btn btn-share px-3 py-1.5 rounded-md text-sm font-semibold"
+                data-share-url="https://www.ada.gov/resources/web-guidance/"
+                data-share-title="Web Accessibility &amp; the ADA — U.S. Dept. of Justice"
+                data-share-text="Official ADA guidance on web accessibility from the U.S. Department of Justice:">Share</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           NEW: QUICK LINKS & SHARE CENTER
+           ============================================================ -->
+      <div class="mb-6 p-4 bg-slate-50 border-2 border-[#14395d] rounded-md">
+        <p class="text-xs uppercase tracking-wide text-[#14395d] font-bold mb-1">🔗 Quick Links &amp; Share Center</p>
+        <p class="text-gray-600 text-sm mb-3">
+          Tap <span class="font-bold">Open</span> to view it yourself, <span class="font-bold">Copy Link</span> to grab the URL,
+          or <span class="font-bold">Share</span> to send it straight to a prospect.
+        </p>
+
+        <div class="space-y-3">
+
+          <!-- 1. Advertising Platform -->
+          <div class="link-card">
+            <p class="font-bold text-[#14395d] text-base">Advertising Platform</p>
+            <p class="text-xs text-gray-600 mb-1">WebSwan Media Network &mdash; featured visibility spots with a direct portal button ($289/year).</p>
+            <a href="https://www.webswanmedianetwork.com" target="_blank" rel="noopener" class="link-url">https://www.webswanmedianetwork.com</a>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <a href="https://www.webswanmedianetwork.com" target="_blank" rel="noopener" class="btn-open px-3 py-1.5 rounded-md text-sm font-semibold">Open</a>
+              <button type="button" class="copy-btn btn-copy px-3 py-1.5 rounded-md text-sm font-semibold" data-copy="https://www.webswanmedianetwork.com">Copy Link</button>
+              <button type="button" class="share-btn btn-share px-3 py-1.5 rounded-md text-sm font-semibold"
+                data-share-url="https://www.webswanmedianetwork.com"
+                data-share-title="WebSwan Media Network — Advertising Platform"
+                data-share-text="Take a look at the WebSwan Media Network advertising platform — featured visibility spots with a direct button to your own client portal:">Share</button>
+            </div>
+          </div>
+
+          <!-- 2. The WebSwan Credential -->
+          <div class="link-card">
+            <p class="font-bold text-[#14395d] text-base">The WebSwan Credential</p>
+            <p class="text-xs text-gray-600 mb-1">Share this so prospects can see who we are and what we stand behind.</p>
+            <a href="https://taniad2169.github.io/WebSWan-Alignable/" target="_blank" rel="noopener" class="link-url">https://taniad2169.github.io/WebSWan-Alignable/</a>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <a href="https://taniad2169.github.io/WebSWan-Alignable/" target="_blank" rel="noopener" class="btn-open px-3 py-1.5 rounded-md text-sm font-semibold">Open</a>
+              <button type="button" class="copy-btn btn-copy px-3 py-1.5 rounded-md text-sm font-semibold" data-copy="https://taniad2169.github.io/WebSWan-Alignable/">Copy Link</button>
+              <button type="button" class="share-btn btn-share px-3 py-1.5 rounded-md text-sm font-semibold"
+                data-share-url="https://taniad2169.github.io/WebSWan-Alignable/"
+                data-share-title="The WebSwan Credential"
+                data-share-text="Here's The WebSwan Credential — take a look:">Share</button>
+            </div>
+          </div>
+
+          <!-- 3. State Penalty Checker -->
+          <div class="link-card">
+            <p class="font-bold text-[#14395d] text-base">State Penalty Checker</p>
+            <p class="text-xs text-gray-600 mb-1">Let them verify the compliance findings themselves &mdash; no pressure, just proof.</p>
+            <a href="https://taniad2169.github.io/WebSwan-insight/" target="_blank" rel="noopener" class="link-url">https://taniad2169.github.io/WebSwan-insight/</a>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <a href="https://taniad2169.github.io/WebSwan-insight/" target="_blank" rel="noopener" class="btn-open px-3 py-1.5 rounded-md text-sm font-semibold">Open</a>
+              <button type="button" class="copy-btn btn-copy px-3 py-1.5 rounded-md text-sm font-semibold" data-copy="https://taniad2169.github.io/WebSwan-insight/">Copy Link</button>
+              <button type="button" class="share-btn btn-share px-3 py-1.5 rounded-md text-sm font-semibold"
+                data-share-url="https://taniad2169.github.io/WebSwan-insight/"
+                data-share-title="State Penalty Checker — WebSwan"
+                data-share-text="Run your website through the State Penalty Checker and see what comes up:">Share</button>
+            </div>
+          </div>
+
+          <!-- 4. ADA / DOJ Web Accessibility -->
+          <div class="link-card">
+            <p class="font-bold text-[#14395d] text-base">ADA Web Accessibility &amp; U.S. Dept. of Justice</p>
+            <p class="text-xs text-gray-600 mb-1">The official government guidance page on web accessibility &amp; the ADA.</p>
+            <a href="https://www.ada.gov/resources/web-guidance/" target="_blank" rel="noopener" class="link-url">https://www.ada.gov/resources/web-guidance/</a>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <a href="https://www.ada.gov/resources/web-guidance/" target="_blank" rel="noopener" class="btn-open px-3 py-1.5 rounded-md text-sm font-semibold">Open</a>
+              <button type="button" class="copy-btn btn-copy px-3 py-1.5 rounded-md text-sm font-semibold" data-copy="https://www.ada.gov/resources/web-guidance/">Copy Link</button>
+              <button type="button" class="share-btn btn-share px-3 py-1.5 rounded-md text-sm font-semibold"
+                data-share-url="https://www.ada.gov/resources/web-guidance/"
+                data-share-title="Web Accessibility &amp; the ADA — U.S. Dept. of Justice"
+                data-share-text="Official ADA guidance on web accessibility from the U.S. Department of Justice:">Share</button>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -415,6 +560,9 @@
 
   <!-- Floating quick-message WhatsApp button -->
   <a id="whatsapp-float" href="https://wa.me/14158770687?text=Hi%2C%20I%27d%20like%20to%20connect%20about%20WebSwan%20Digital%20Solutions." target="_blank" rel="noopener" title="Message us on WhatsApp">💬</a>
+
+  <!-- Toast feedback -->
+  <div id="toast"></div>
 
   <!-- Celebration overlay -->
   <div id="celebration-overlay"></div>
@@ -539,6 +687,85 @@
         document.querySelectorAll('.script-panel').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('script-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ---------- Toast helper ----------
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    // ---------- Copy-to-clipboard (all .copy-btn) ----------
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      }
+      return new Promise((resolve, reject) => {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.top = '-1000px';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
+
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const text = this.dataset.copy || '';
+        const original = this.textContent;
+        try {
+          await copyText(text);
+          this.textContent = '✅ Copied!';
+          showToast('Link copied to clipboard');
+        } catch (err) {
+          console.warn('Copy failed:', err);
+          this.textContent = '⚠️ Copy manually';
+          showToast('Copy failed — long-press the link to copy');
+        }
+        setTimeout(() => { this.textContent = original; }, 1800);
+      });
+    });
+
+    // ---------- Share (all .share-btn) ----------
+    document.querySelectorAll('.share-btn').forEach(btn => {
+      btn.addEventListener('click', async function() {
+        const url = this.dataset.shareUrl || '';
+        const title = this.dataset.shareTitle || document.title;
+        const text = this.dataset.shareText || '';
+
+        // Prefer the native share sheet (mobile)
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: title, text: text, url: url });
+            return;
+          } catch (err) {
+            if (err && err.name === 'AbortError') return; // user cancelled
+            console.warn('Native share failed, falling back:', err);
+          }
+        }
+
+        // Fallback: copy the link
+        try {
+          await copyText(url);
+          showToast('Sharing not supported here — link copied instead');
+        } catch (err) {
+          showToast('Could not share — please copy the link manually');
+        }
       });
     });
 
