@@ -123,6 +123,100 @@
     }
     .btn-share:hover { background: #15803d; }
 
+    /* ---------- VIDEO CARD (click-to-play) ---------- */
+    .video-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.85rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+      overflow: hidden;
+      border-radius: 0.375rem;
+      background: #000;
+    }
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .video-thumb-btn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      border: 0;
+      background: #000;
+      cursor: pointer;
+      display: block;
+      overflow: hidden;
+      border-radius: 0.375rem;
+    }
+    .video-thumb-btn img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+      transition: opacity .2s ease;
+    }
+    .video-thumb-btn:hover img { opacity: 1; }
+    .video-thumb-btn .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.45));
+      color: #ffffff;
+    }
+    .video-thumb-btn .play-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,.4);
+      transition: transform .15s ease;
+    }
+    .video-thumb-btn:hover .play-icon { transform: scale(1.08); }
+    .video-thumb-btn .play-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: #14395d;
+      margin-left: 4px;
+    }
+    .video-thumb-btn .play-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      text-shadow: 0 1px 4px rgba(0,0,0,.7);
+    }
+    .video-fallback-note {
+      font-size: 0.72rem;
+      color: #6b7280;
+      margin-top: 6px;
+      text-align: center;
+    }
+
     /* Toast feedback */
     #toast {
       position: fixed;
@@ -308,6 +402,7 @@
           <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="gatekeeper">Gatekeeper Pivot</button>
           <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="followup">Follow-Up Hook</button>
           <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="receptionist">Virtual Receptionist</button>
+          <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="appointment">Paul Cheatsheet</button>
           <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="media">WebSwan Media Network Online Advertising</button>
           <button type="button" class="script-tab-btn px-3 py-1.5 rounded-full border border-[#14395d] text-sm font-semibold" data-tab="important">Important Information to Learn</button>
         </div>
@@ -350,6 +445,85 @@
               <p class="text-sm text-gray-800"><span class="font-bold">Objection: "How much does it cost?"</span><br>"While traditional answering services charge $400 to $1,000 a month with strict minute caps, our fully managed 24/7 receptionist is a flat $199 to $299 a month&mdash;saving just one missed client covers the entire year."</p>
             </div>
           </div>
+
+          <!-- ============================================================
+               PANEL: PAUL CHEATSHEET
+               ============================================================ -->
+          <div id="script-appointment" class="script-panel">
+            <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Paul Cheatsheet · Follow-Up on Audit Email (Doctor's Office)</p>
+            <p class="text-gray-600 text-sm mb-2">Goal: Set a 10-minute appointment with the doctor or office manager. Use the compliance angle. If they ask about ADA or cookies, give the quick answer and immediately return to scheduling.</p>
+
+            <p class="text-gray-900 font-bold text-lg leading-relaxed">
+              "Hi this is Paul, how are you today? I don't know if I am talking to the right person. Tania with WebSwan Digital Solutions sent an email with an audit result for Doctor _________ digital presence. I am following up to set the 10-minute appointment with the doctor or the office manager to go over the findings. What is the best time and day the office manager/doctor will be available to set the appointment?"
+            </p>
+
+            <div class="mt-3 space-y-2">
+              <p class="text-xs uppercase tracking-wide text-blue-700 font-bold">If they ask "What email?" or "What is this about?"</p>
+              <p class="text-sm text-gray-800">
+                "The [State of ____] is issuing penalties for businesses whose websites are not in compliance — missing ADA button and cookie banners. The doctor's practice is missing these compliance items, which can lead to penalties and possible lawsuits. The preliminary audit explains the issues. What is the best time and date to set the appointment?"
+              </p>
+
+              <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mt-3">If they ask "What is ADA?"</p>
+              <p class="text-sm text-gray-800">
+                "The ADA is a U.S. civil-rights law that prohibits disability discrimination and applies to websites. It requires accessible design — and missing an ADA button on your site can trigger penalties. The audit covers this. So what is the best time and date to set the appointment?"
+              </p>
+
+              <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mt-3">If they ask "What is a cookie policy?"</p>
+              <p class="text-sm text-gray-800">
+                "A cookie policy is a legal document that explains how a website uses cookies to track, collect, and store visitor information. Missing one is a compliance gap that states are now penalizing. The audit explains it all. What is the best time and date to set the appointment?"
+              </p>
+
+              <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mt-3">If they need more detail on ADA or cookies:</p>
+              <p class="text-sm text-gray-800">
+                "I can send you the official resources, or you can check the 'Important Information to Learn' section we have. But the main point is the audit shows missing compliance items. Let's get that 10-minute appointment on the calendar — what day and time works best?"
+              </p>
+            </div>
+
+            <!-- REBUTTAL — "I can't tell you that" / Timing Pushback -->
+            <div class="mt-4 border-l-4 border-red-500 bg-red-50 p-3 rounded-r-md">
+              <p class="text-xs uppercase tracking-wide text-red-800 font-bold mb-2">🔥 Rebuttal: "I Can't Tell You That" / They Push Back on Timing</p>
+              <p class="text-sm text-gray-800 leading-relaxed">
+                "I can't tell you that tomorrow, next week, or next month you will receive in the mail a letter from the State Attorney of _______ with a penalty.
+                I can't tell you you will get a letter tomorrow about a lawsuit.
+                <br><br>
+                What I <span class="font-bold">can</span> tell you is: state penalties and lawsuits on website compliance are real. There is a number of small business owners that have been penalized for website compliance in 2026.
+                <br><br>
+                Our job is to protect your digital assets — to avoid a state penalty or a lawsuit.
+                <br><br>
+                You can Google <span class="font-bold">'State of ___________ website compliance penalty'</span> if you are in front of your computer right now — and also check the <span class="font-bold">Sephora website compliance penalty: 1.2 million dollars in the State of California.</span>
+                <br><br>
+                So let's get that 10-minute appointment on the calendar — what day and time works best for the doctor or office manager?"
+              </p>
+            </div>
+
+            <!-- REBUTTAL — HIPAA / Online Application Compliance -->
+            <div class="mt-4 border-l-4 border-purple-600 bg-purple-50 p-3 rounded-r-md">
+              <p class="text-xs uppercase tracking-wide text-purple-800 font-bold mb-2">🔐 Rebuttal: HIPAA &amp; Your Online Application Is Critical</p>
+              <p class="text-sm text-gray-800 leading-relaxed">
+                "There's one more thing I want to flag, and it's important.
+                <br><br>
+                <span class="font-bold">Your online application is critical.</span> It is collecting information <span class="font-bold">without a disclaimer</span> — which is against HIPAA regulation.
+                <br><br>
+                And if it <span class="font-bold">does</span> have a disclaimer, Tania is also auditing your online application, and she will need to discuss the findings with the doctor directly.
+                <br><br>
+                Our goal is simple: <span class="font-bold">protect your digital assets.</span> We are experts in website compliance, and we can guide you to avoid any issues that will occur.
+                <br><br>
+                So the best next step is that 10-minute appointment — what day and time works best for the doctor or the office manager?"
+              </p>
+            </div>
+
+            <div class="mt-3 border-l-4 border-yellow-500 bg-yellow-50 p-3 rounded-r-md">
+              <p class="text-xs uppercase tracking-wide text-yellow-800 font-bold mb-1">Caller Reminders</p>
+              <ul class="text-sm text-gray-800 list-disc ml-5 space-y-1">
+                <li>Always bring it back to setting the appointment — don't get stuck explaining compliance.</li>
+                <li>Use the doctor's name and the state if you have them.</li>
+                <li>If they resist, offer to send the audit again and set a follow-up time.</li>
+                <li>Goal: a confirmed 10-minute appointment with the doctor or office manager.</li>
+              </ul>
+            </div>
+          </div>
+          <!-- ================= END PANEL ================= -->
+
           <div id="script-media" class="script-panel">
             <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">WebSwan Media Network &middot; Online Advertising for Doctors &amp; Attorneys &middot; $289/year (about $24/month)</p>
             <p class="text-gray-600 text-sm mb-2">Sell it as a featured visibility spot plus a direct button to their own client portal &mdash; not as &ldquo;ads.&rdquo; About 45 seconds:</p>
@@ -389,6 +563,86 @@
           <div id="script-important" class="script-panel">
             <p class="text-xs uppercase tracking-wide text-blue-700 font-bold mb-1">Important Information to Learn &middot; Know It Cold Before You Dial</p>
             <p class="text-gray-600 text-sm mb-3">Use this to answer questions confidently and sound like the expert. No jargon &mdash; just plain English.</p>
+
+            <!-- ============================================================
+                 TRAINING VIDEOS (click-to-play thumbnails)
+                 ============================================================ -->
+            <div class="mb-5">
+              <p class="text-xs uppercase tracking-wide text-[#14395d] font-bold mb-2">🎥 Training Videos &middot; Watch &amp; Learn</p>
+
+              <div class="space-y-3">
+
+                <!-- Video 1: Who Is WebSwan -->
+                <div class="video-card">
+                  <p class="font-bold text-[#14395d] text-base">Who Is WebSwan &amp; How We Operate</p>
+                  <p class="text-xs text-gray-600 mb-2">Learn who we are, how we operate, and what we stand for.</p>
+
+                  <div class="video-wrapper">
+                    <button type="button"
+                      class="video-thumb-btn"
+                      data-video-id="vW1cXZncTUc"
+                      data-video-title="Meet The WebSwan | Get Found, Capture Leads &amp; Grow Your Business"
+                      aria-label="Play: Who Is WebSwan &amp; How We Operate">
+                      <img src="https://img.youtube.com/vi/vW1cXZncTUc/maxresdefault.jpg"
+                           onerror="this.onerror=null;this.src='https://img.youtube.com/vi/vW1cXZncTUc/hqdefault.jpg';"
+                           alt="Who Is WebSwan &amp; How We Operate — video thumbnail">
+                      <span class="play-overlay">
+                        <span class="play-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </span>
+                        <span class="play-label">Tap to Play</span>
+                      </span>
+                    </button>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    <a href="https://youtu.be/vW1cXZncTUc" target="_blank" rel="noopener" class="btn-open px-3 py-1.5 rounded-md text-sm font-semibold">Open on YouTube</a>
+                    <button type="button" class="copy-btn btn-copy px-3 py-1.5 rounded-md text-sm font-semibold" data-copy="https://youtu.be/vW1cXZncTUc">Copy Link</button>
+                    <button type="button" class="share-btn btn-share px-3 py-1.5 rounded-md text-sm font-semibold"
+                      data-share-url="https://youtu.be/vW1cXZncTUc"
+                      data-share-title="Meet The WebSwan | Get Found, Capture Leads &amp; Grow Your Business"
+                      data-share-text="Take a look at who WebSwan is and how we operate:">Share</button>
+                  </div>
+                  <p class="video-fallback-note">If the video doesn't play here, tap “Open on YouTube.”</p>
+                </div>
+
+                <!-- Video 2: ADA & Cookie Penalties -->
+                <div class="video-card">
+                  <p class="font-bold text-[#14395d] text-base">ADA Compliance &amp; Cookie Penalties</p>
+                  <p class="text-xs text-gray-600 mb-2">Understand the ADA compliance and cookie penalty issues we help businesses solve.</p>
+
+                  <div class="video-wrapper">
+                    <button type="button"
+                      class="video-thumb-btn"
+                      data-video-id="lvlRa_QZK3o"
+                      data-video-title="Your website represents your business but have you checked what happens behind the scenes?"
+                      aria-label="Play: ADA Compliance &amp; Cookie Penalties">
+                      <img src="https://img.youtube.com/vi/lvlRa_QZK3o/maxresdefault.jpg"
+                           onerror="this.onerror=null;this.src='https://img.youtube.com/vi/lvlRa_QZK3o/hqdefault.jpg';"
+                           alt="ADA Compliance &amp; Cookie Penalties — video thumbnail">
+                      <span class="play-overlay">
+                        <span class="play-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </span>
+                        <span class="play-label">Tap to Play</span>
+                      </span>
+                    </button>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    <a href="https://youtu.be/lvlRa_QZK3o" target="_blank" rel="noopener" class="btn-open px-3 py-1.5 rounded-md text-sm font-semibold">Open on YouTube</a>
+                    <button type="button" class="copy-btn btn-copy px-3 py-1.5 rounded-md text-sm font-semibold" data-copy="https://youtu.be/lvlRa_QZK3o">Copy Link</button>
+                    <button type="button" class="share-btn btn-share px-3 py-1.5 rounded-md text-sm font-semibold"
+                      data-share-url="https://youtu.be/lvlRa_QZK3o"
+                      data-share-title="ADA Compliance &amp; Cookie Penalties — WebSwan"
+                      data-share-text="Watch this to understand the ADA compliance and cookie penalty issues affecting businesses:">Share</button>
+                  </div>
+                  <p class="video-fallback-note">If the video doesn't play here, tap “Open on YouTube.”</p>
+                </div>
+
+              </div>
+            </div>
+            <!-- ================= END TRAINING VIDEOS ================= -->
 
             <!-- What is ADA and WCAG -->
             <div class="bg-white border-l-4 border-[#14395d] rounded-r-md p-4 mb-4">
@@ -452,7 +706,7 @@
               </div>
             </div>
 
-            <!-- NEW: HIPAA -->
+            <!-- HIPAA -->
             <div class="bg-white border-l-4 border-[#14395d] rounded-r-md p-4 mb-4">
               <p class="text-base font-bold text-[#14395d] mb-2">🔐 What Is HIPAA?</p>
               <p class="text-gray-800 text-sm leading-relaxed mb-2">
@@ -786,6 +1040,27 @@
         document.querySelectorAll('.script-panel').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('script-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ---------- Click-to-Play Video Thumbnails ----------
+    document.querySelectorAll('.video-thumb-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const videoId = this.dataset.videoId;
+        const title = this.dataset.videoTitle || 'YouTube video';
+        const wrapper = this.parentElement;
+
+        // Build the iframe with autoplay
+        const iframe = document.createElement('iframe');
+        iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0';
+        iframe.title = title;
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('loading', 'lazy');
+
+        // Replace the thumbnail button with the iframe
+        wrapper.innerHTML = '';
+        wrapper.appendChild(iframe);
       });
     });
 
